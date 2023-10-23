@@ -1,0 +1,14 @@
+﻿@model IList<PushNotfication.Models.NotificationHistory>
+@{
+    ViewData["Title"] = "Notification History";
+}
+
+@foreach(var item in Model)
+{
+    <div>
+    <h1>@item.Title</h1>
+    <p>@item.Message</p>
+<hr>    
+</div>
+
+}
