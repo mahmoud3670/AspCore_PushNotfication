@@ -1,6 +1,8 @@
 importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging-compat.js');
 
+
+// Initialize Firebase
 var config = {
     apiKey: "AIzaSyBZMLMAwYOeQ8KMDQBK2HkoUnM548CKCfk",
     authDomain: "testpush-327ec.firebaseapp.com",
@@ -13,19 +15,20 @@ firebase.initializeApp(config);
 
 // Retrieve Firebase Messaging object.
 const messaging = firebase.messaging();
+
 messaging.onBackgroundMessage(function (payload) {
-    console.log("im here " + payload)
-    var title = payload.data.title;
+    console.log('Message received. ', payload);
+    //alert(payload.notification.title)
+    var title = payload.notification.title;
 
     var options = {
-        body: payload.data.body,
-        icon: payload.data.icon,
-        image: payload.data.image,
-        data: {
-            time: new Date(Date.now()).toString(),
-            click_action: payload.data.click_action
-        }
-
+        body: payload.notification.body,
+        icon: payload.notification.icon,
+        //image: payload.data.image,
+        // data: {
+        //     time: new Date(Date.now()).toString(),
+        //     click_action: payload.data.click_action
+        // }
     };
     return self.registration.showNotification(title, options);
 

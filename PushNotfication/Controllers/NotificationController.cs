@@ -44,18 +44,22 @@ namespace PushNotfication.Controllers
             return Ok("Message sent successfully!");
         }
         [HttpPost("setToken")]
-        public async Task<IActionResult> SetToken([FromBody] Users users)
+        public async Task<IActionResult> SetToken([FromBody] Users user)
         {
-           await _notficationDB.Users.AddAsync(new Users() { FmcToken=users.FmcToken });
-            await _notficationDB.SaveChangesAsync();
+            if(await _notficationDB.Users.AsNoTracking().FirstOrDefaultAsync(x => x.FmcToken==user.FmcToken)==null)
+            {
+                await _notficationDB.Users.AddAsync(new Users() { FmcToken=user.FmcToken });
+                await _notficationDB.SaveChangesAsync();
+            }
+              
             CookieOptions option = new();
             option.Expires = DateTimeOffset.UtcNow.AddMonths(12);
-            HttpContext?.Response.Cookies.Append("token", users.FmcToken, option);
-            return Ok(new { users.FmcToken });
+            HttpContext?.Response.Cookies.Append("token", user.FmcToken, option);
+            return Ok(new { user.FmcToken });
         }
         private async Task<List<Users>> GetUsers()
         {
-            var users =await _notficationDB.Users.AsNoTracking().ToListAsync();
+            var users =await _notficationDB.Users.Where(x=>!string.IsNullOrEmpty( x.FmcToken)).AsNoTracking().ToListAsync();
             if (users.Any())
                 return users;
             return new List<Users>();
